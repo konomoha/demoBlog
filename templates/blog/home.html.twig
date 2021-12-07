@@ -1,0 +1,31 @@
+{% extends "base.html.twig" %}
+{# Extends "base.html.twig" récupère le template base.html.twig et nous permet de récupérer toutes ses balises twig #}
+
+{% block title %}
+    Template Home
+{% endblock %}
+
+{% block body %}
+{#title est une variable twig qui provient de controller BlogController et plus précisément de la méthode render() définit dans la méthode home()
+Tout ce qui est traité dans les templates vient forcément d'un controller
+
+Twig est un language de rendu, un moteur de template:
+- simplicité du langage
+- Absence de PHP au sein de l'affichage
+- Plus simple pour un intégrateur
+- Plus rapide à l'éxécution
+
+{{ variable }}-->Interpolation
+{% %}--> Commande (ex : if/else | for/endfor)
+#}
+<h1 class="text-center my-5">{{title}}</h1>
+
+{% if age > 18 %}
+    <p>Tu es majeur !</p>
+{% else %}
+    <p>Tu es mineur !</p>
+{% endif %}
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore tempora maiores ea doloremque accusamus ratione. Ullam corrupti accusamus nulla ut exercitationem, blanditiis voluptatibus? Autem eum totam harum quisquam reprehenderit, dolorum aliquam eaque placeat quis iste beatae tempora esse quidem alias numquam quae culpa ex hic quo sequi. Qui vitae vero, iure dicta quas velit magnam reprehenderit minus praesentium eum tempore nulla, voluptas suscipit beatae maxime assumenda dolor rem deleniti non? Necessitatibus, culpa. Totam fugit nulla repudiandae ipsa soluta! Dolorem obcaecati accusantium ducimus labore, fugiat ipsam sit eos recusandae harum. A modi neque excepturi veniam. Illo ipsum minima debitis reprehenderit in?</p>
+    
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Expedita, illo impedit. Hic est nisi doloribus officia totam tempore distinctio ex accusamus vitae? Blanditiis recusandae ipsum sint explicabo. Reiciendis totam ducimus quo maxime odit vel at et blanditiis quas voluptatem voluptas eligendi, tenetur, numquam est obcaecati necessitatibus magnam assumenda aut possimus. Voluptatum incidunt repellat atque non velit id. Quas voluptatem officiis iure consequatur laudantium aut ut quam commodi maxime sint, eveniet sit labore, quisquam ducimus deleniti ad dignissimos at, quis asperiores deserunt. Consectetur eius sunt aliquid iure, error vitae libero laborum quam quidem, similique facilis consequatur tenetur delectus, molestias voluptas nemo laboriosam quod cumque cum nostrum architecto doloremque. Recusandae suscipit modi odio sed harum. Corrupti beatae architecto sit repudiandae rerum adipisci distinctio rem quod consequatur itaque dolore velit, asperiores modi eos magnam doloribus ipsam autem neque ipsa? Illum officia eaque minima voluptas rem! Deleniti et incidunt debitis rem illum neque deserunt placeat ipsa, exercitationem praesentium quos labore nesciunt magni inventore architecto saepe enim laborum eveniet accusamus facilis est numquam a culpa repudiandae! Quibusdam est iure quo vitae earum nobis quidem debitis obcaecati modi? Maiores voluptatem ab eum numquam, molestiae minus facilis recusandae voluptas natus placeat magni, iste rerum iusto necessitatibus perferendis!</p>
+{% endblock %}

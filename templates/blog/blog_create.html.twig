@@ -1,0 +1,46 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+Blog Symfony | Nouvel article
+{% endblock %}
+
+{% block body %}
+    <h1 class="text-center my-5">Nouvel article</h1>
+
+{# Première version du formulaire #}
+{# <form method="post">
+
+    <div class="mb-3">
+        <label for="titre" class="form-label">Titre</label>
+        <input type="text" class="form-control" id="titre" name="titre">
+    </div>
+
+    <div class="mb-3">
+        <label for="contenu" class="form-label">contenu</label>
+        <textarea type="text" class="form-control" id="contenu" rows="10" name="contenu"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label for="photo" class="form-label">Photo</label>
+        <input type="text" class="form-control" id="photo" rows="10" name="photo">
+    </div>
+
+<button type="submit" class="btn btn-dark mb-5">Enregistrer</button>
+
+</form> #}
+
+{# Deuxième version du formulaire #}
+
+{{ form_start(formArticle)}}
+
+    {{ form_row(formArticle.titre)}}
+
+    {{ form_row(formArticle.contenu)}}
+    
+    {{ form_row(formArticle.photo)}}
+
+    <button class="btn btn-dark">Enregistrer</button>
+
+{{ form_end(formArticle)}}
+
+{% endblock %}
