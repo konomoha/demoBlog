@@ -41,7 +41,7 @@ class ArticleFixtures extends Fixture
             $article->setTitre($faker->sentence())
                     ->setContenu($contenu)
                     ->setPhoto(null)
-                    ->setDate($faker->dateTimeBetween('-6 months)'))
+                    ->setDate($faker->dateTimeBetween('-6 months'))
                     ->setCategory($category); //on relie les articles aux catégories déclarées ci-dessus. Le setteur attend en argument l'objet entité $catégory pour créer la clé étrangère et non un int
 
                     $manager->persist($article);

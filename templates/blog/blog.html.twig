@@ -8,6 +8,7 @@
 <div class="row mb-2">
 
 {# cet objet 'articles' ne sort pas de nulle part,c'est ce que le controlleur a transmit au template, c'est à dire l'ensemble des articles sélectionnés en BDD #}
+{# {{dump(articles)}} #}
 
 {% for data in articles %}
 {# {{dump(data)}} #}
@@ -24,7 +25,7 @@
     <div class="col-md-6">
       <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm position-relative">
         <div class="col-{{ col }} p-4 d-flex flex-column position-static">
-          <strong class="d-inline-block mb-2 text-primary">World</strong>
+          <strong class="d-inline-block mb-2 text-primary">{{data.category.titre}}</strong>
           <h3 class="mb-0">{{ data.titre }}</h3>
           <div class="mb-1 text-muted">Publié le {{data.date|date('d/m/Y')}} à {{data.date|date('H:i:s')}}</div>
 
