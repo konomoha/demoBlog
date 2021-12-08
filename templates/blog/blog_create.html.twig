@@ -1,11 +1,27 @@
 {% extends "base.html.twig" %}
 
 {% block title %}
-Blog Symfony | Nouvel article
+Blog Symfony | 
+
+ {% if editMode %}
+        Modification de l'article 
+    {% else %}
+        {# Sinon, l'article ne possède pas d'id, c'est une insertion #}
+        Nouvel article 
+    {% endif %}  
+
 {% endblock %}
 
 {% block body %}
-    <h1 class="text-center my-5">Nouvel article</h1>
+    <h1 class="text-center my-5">
+    {# Si editMode renvoie TRUE, cela veut dire que l'id possède un ID, c'est une modification #}
+    {% if editMode %}
+        Modification de l'article 
+    {% else %}
+        {# Sinon, l'article ne possède pas d'id, c'est une insertion #}
+        Nouvel article 
+    {% endif %}    
+    </h1>
 
 {# Première version du formulaire #}
 {# <form method="post">
@@ -39,7 +55,26 @@ Blog Symfony | Nouvel article
     
     {{ form_row(formArticle.photo)}}
 
-    <button class="btn btn-dark">Enregistrer</button>
+    {# Si photoActuelle retourne TRUE, cela veut dire que l'article possède une photo, c'est une modification  #}
+
+    {% if photoActuelle %}
+        <p>
+            <em>Vous pouvez uploader une nouvelle photo si vous souhaitez la modifier</em>
+            <img src="{{ asset('uploads/photos/' ~ photoActuelle)}}"  class="col-12 img-responsive">
+        </p>
+
+    {% endif %}
+
+    <button class="btn btn-dark">
+
+         {% if editMode%}
+        Modifier
+    {% else %}
+        {# Sinon, l'article ne possède pas d'id, c'est une insertion #}
+        Enregistrer
+    {% endif %}  
+
+    </button>
 
 {{ form_end(formArticle)}}
 

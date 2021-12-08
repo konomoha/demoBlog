@@ -10,7 +10,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class BlogController extends AbstractController
 {
@@ -59,7 +61,7 @@ class BlogController extends AbstractController
     // Méthode permettant d'insérer / modifier un article en BDD
     #[Route('/blog/new', name: 'blog_create')]
     #[Route('/blog/{id}/edit', name: 'blog_edit')]
-    public function blogCreate(Article $article = null, Request $request, EntityManagerInterface $manager): Response
+    public function blogCreate(Article $article = null, Request $request, EntityManagerInterface $manager, SluggerInterface $slugger): Response
     {
         // La classe Request de Symfony contient toutes les données véhiculées par les superglobales ($_GET, $_POST, $_SERVER, $_COOKIE etc...)
         // $request->request : la propriété 'request' de l'objet $request contient toutes les données de $_POST
@@ -91,6 +93,13 @@ class BlogController extends AbstractController
         
         //si la variable article est null, cela veut dire que nous sommes sur la route '/blog/new', on entre dans le IF et on créée une nouvelle instance de l'entité article
         //Si la variable $article n'est pas null, cela veut dire que nous sommes sur la route '/blog/{id}/edit', nous n'entrons pas dans le IF car $article contient un article de la BDD
+        
+        //si la condition IF retourne TRUE, cela veut dire que $article contient un article stocké en BDD, on stock la photo actuelle de l'article dans la variable $photoActuelle
+        if($article)
+        {
+            $photoActuelle = $article->getPhoto();
+        }
+
         if(!$article)
         {
             $article = new Article;
@@ -102,21 +111,100 @@ class BlogController extends AbstractController
 
         $formArticle = $this->createForm(ArticleType::class, $article);
 
+        //$article->setTitre($_POST['titre'])
+        //$article->setContenu($_POST['contenu'])
+        //handleRequest() permet d'envoyer chaque données de $_POST et de kes transmettre aux bons setters de l'objet entité $article
+
         $formArticle->handleRequest($request);
 
         if($formArticle->isSubmitted() && $formArticle->isValid())
         {
             // Le seul setter que l'on appelle de l'entité, c'est celui de la date puisqu'il n'y a pas de champ 'date' dans le formmulaire
+
+            //Si l'article ne possède pas d'id, c'est une insertion, alors on entre dans la condition IF et on génère une date d'article
+            if(!$article->getId())
             $article->setDate(new \DateTime());
+
+            //DEBUT TRAITEMENT DE LA PHOTO
+            //On récupère toutes les informations de l'image uploadé dans le formulaire
+            $photo = $formArticle->get('photo')->getData();
+
+            // dd($photo);
+
+            if($photo)//si une photo est uploadé dans le formulaire, on entre le IF et on traite l'image
+            {
+                //On récupère le nom d'origine de la photo
+                $nomOriginePhoto = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
+                // dd($nomOriginePhoto);
+
+                //cela est nécessaire pour inclure en toute sécurité le nom du fichier dans l'URL
+                $secureNomPhoto = $slugger->slug($nomOriginePhoto);
+            
+                $nouveauNomFichier = $secureNomPhoto . '-' . uniqid(). '.' .$photo->guessExtension();
+                // dd($nouveauNomFichier);
+
+                try // on tente de copier l'image dans le dossier
+                {
+                    // On copie l'image vers le bon chemin, vers le bon dossier 'public/uploads/photos' (services.yaml)
+                    $photo->move(
+                        $this->getparameter('photo_directory'),
+                        $nouveauNomFichier
+                    );
+                }
+                catch(FileException $e)
+                {
+                    
+                }
+
+                $article->setPhoto($nouveauNomFichier);
+
+            }
+
+            //Sinon, aucune image n'a été uploadée, on renvoie dans la bdd la photo actuelle de l'article
+            else
+            {
+                //Si la photo actuelle est définie en BDD, alors en cas de modification, si on ne change pas de photo, on renvoie la photo actuelle en bdd
+               if(isset($photoActuelle))
+               {
+                   $article->setPhoto($photoActuelle);
+               }
+
+               //Sinon aucune photo n'a été uploadée, on envoie la valeur NULL en BDD pour la photo
+               else
+               {
+                    $article->setPhoto(null);
+               }
+                
+            }
+
+            // FIN TRAITEMENT PHOTO
+
             // dd($article);
+
+            //Message de validation en session
+            if(!$article->getId())
+                $txt = "enregistré";
+            else
+                $txt = "modifié";
+
+            //Méthode permettant d'enregistrer des messages utilisateurs accessibles en session
+            $this->addFlash('success', "Larticle a été $txt avec succès!");
+
             $manager->persist($article);
             $manager->flush();
 
+            //Une fois l'insertion/modification exécutée en BDD, on redirige l'internaute vers le détail de l'article, on transmet l'id à fournir dans l'url en 2ème paramètre de la méthode redirectToRoute()
+            return $this->redirectToRoute('blog_show', [
+                'id' => $article->getId()
+            ]);
+
         }
 
-        return $this->render('blog/blog_create.html.twig', ['formArticle'=>$formArticle->createView()
+        return $this->render('blog/blog_create.html.twig', ['formArticle'=>$formArticle->createView(),
         // on transmet le formulaire au template afin de poouvoir l'afficher avec Twig
         // createView() retourne un petit objet qui représente l'affichage du formulaire, on le récupère dans le template blog_create.html.twig
+        'editMode' => $article->getId(),
+        'photoActuelle' => $article->getPhoto()
     ]);
     }
 

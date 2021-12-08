@@ -9,9 +9,21 @@
 {# Cet objet 'article' ne sort pas de nulle part, c'est ce que le controller a transmit au template, c'est à dire les informations d'un article sélectionné en BDD en fonction de l'ID transmit dans l'url#}
 {{dump(article)}}
 
+{# Affichage des messages utilisateurs stockés en session (addFlash dans le controller) #}
+{# app: objet twig qui contient toutes les informations de la session en cours #}
+{% for message in app.flashes('success') %}
+<div class="col-6 mx-auto text-center alert alert-success">{{message}}</div>
+{% endfor %}
+
+ {% if article.photo != null %}
+    {% set col = 8 %} {# set permet de déclarer des variables en TWIG #}
+  {% else %}
+    {% set col = 12 %}
+  {% endif %}
+
 <div class="col-md-12">
       <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm position-relative">
-        <div class="col p-4 d-flex flex-column position-static">
+        <div class="col {{ col }} p-4 d-flex flex-column position-static">
           <strong class="d-inline-block mb-2 text-primary">World</strong>
           <h3 class="mb-0">Featured post</h3>
           <div class="mb-1 text-muted">{{article.date|date('d/m/Y')}}</div>
@@ -23,9 +35,13 @@
           </p>
 
         </div>
-        <div class="col-auto d-none d-lg-block">
-          <img src="{{ article.photo}}" alt="">
-        </div>
+
+         {% if article.photo != null %}
+          <div class="col-auto d-none d-lg-block">
+            <img src="{{ asset('uploads/photos/' ~ article.photo)}}" alt="{{article.titre}}" class="col-12 img-responsive">
+          </div>
+        {% endif %}
+        
       </div>
     </div>
 

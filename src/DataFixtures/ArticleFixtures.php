@@ -2,35 +2,74 @@
 
 namespace App\DataFixtures;
 
+use DateTime;
 use App\Entity\Article;
+use App\Entity\Comment;
+use App\Entity\Category;
 use Doctrine\Persistence\ObjectManager;
+use SebastianBergmann\Comparator\Factory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 
 class ArticleFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        //PHP namespace resolver : extension permettant d'importer les classes (ctrl + alt + i)
-        //La boucle tourne 10 fois afin de créer 10 articles FICTIFS dans la BDD
-        for($i=1; $i<=10; $i++)
+        //On importe la librairie Faker pour les fixtures, cela nous permet de créer de faux articles, catégories, commentaires plus évolués avec par exemple de faux prénoms, dates aléatoires, etc...
+       $faker = \Faker\Factory::create('fr_FR');
+
+       //Création de 3 catégories
+
+       for($cat = 1; $cat<=3; $cat++)
+       {
+           $category = new Category;
+
+           $category->setTitre($faker->word)
+                    ->setDescription($faker->paragraph());
+
+        $manager->persist($category);
+
+        //Création de 4 à 10 articles par catégorie
+        //mt_rand(): fonction prédéfinie PHP qui retourne un chiffre aléatoire en fonction des arguments transmis, ici un chiffre entre 4 et 10
+        for($art = 1; $art<= mt_rand(4,10); $art++)
         {
-            /* Pour insérer des données dans la table SQL Article, nous sommes obligés de passer par sa classe app\Entity\Article, cette classe esty le reflet de la table SQL Article*/
             $article = new Article;
 
-            $article->setTitre("Titre de l'article $i")
-                    ->setContenu("<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet accusamus placeat aliquid hic iusto odit.</p>")
-                    ->setPhoto("https://picsum.photos/id/237/300/700")
-                    ->setDate(new \DateTime());
+            //join() : fonction prédéfinie de PHP (alias : de implode) mais pour les chaînes de caractères
 
-            //Nous faisons appel à l'objet $manager issu de la class ObjectManager
-            //Une classe qui permet entre autre de manipuler les lignes de la BDD (INSERT,UPDATE,DELETE)
-            //persist() : Méthode issu de la class ObjectManager (ORM Doctrine) permettant de garder en mémoire les 10 objets $articles et de préparer les requêtes SQL.
-            $manager->persist($article);
+            $contenu = '<p>' . join( '</p><p>', $faker->paragraphs(5)). '</p>';
+
+            $article->setTitre($faker->sentence())
+                    ->setContenu($contenu)
+                    ->setPhoto(null)
+                    ->setDate($faker->dateTimeBetween('-6 months)'))
+                    ->setCategory($category); //on relie les articles aux catégories déclarées ci-dessus. Le setteur attend en argument l'objet entité $catégory pour créer la clé étrangère et non un int
+
+                    $manager->persist($article);
+
+                    //Création entre 4 et 10 commentaire par article
+            for($cmt = 1; $cmt<=mt_rand(4,10); $cmt++)
+            {
+                $comment = new Comment;
+
+                //Traitement des dates 
+                $now = new DateTime(); //retourne la date du jour
+                $interval = $now->diff($article->getDate()); // retourne un timestamp (un temps en secondes) entre la date de création des articles et aujourd'hui
+                $days = $interval->days; //retourne le nombre de jours entre la date de création des articles et aujourd'hui // 100 jours
+
+                //traitement des paragraphes commentaires
+                $contenu = '<p>' . join( '</p><p>', $faker->paragraphs(2)). '</p>';
+
+                $comment->setCommentaire($contenu)
+                        ->setAuteur($faker->name)
+                        ->setDate($faker->DateTimeBetween("-$days days")) //-10days
+                        ->setArticle($article);
+
+                $manager->persist($comment);
+
+            }
         }
-        // $product = new Product();
-        // $manager->persist($product);
 
-        //FLush() est une méthode issu de la clase ObjectManager (ORM Doctrine) permettant véritablement d'exécuter les requetes SQL en BDD.
-        $manager->flush();
+       }
+       $manager->flush();
     }
 }
