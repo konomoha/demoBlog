@@ -20,6 +20,13 @@ Twig est un language de rendu, un moteur de template:
 #}
 <h1 class="text-center my-5">{{title}}</h1>
 
+{# Permet d'afficher les messages utilisateurs stockés en session (addFlash) #}
+{% for message in app.flashes('success') %}
+    <div class="col-8 mx-auto text-center p-3 bg-success">{{message}}
+    </div>
+
+{% endfor %}
+
 {% if age > 18 %}
     <p>Tu es majeur !</p>
 {% else %}

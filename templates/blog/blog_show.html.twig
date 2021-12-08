@@ -7,7 +7,7 @@
 {% block body %}
 <h1 class="text-center my-5">Détails de {{article.titre}}</h1>
 {# Cet objet 'article' ne sort pas de nulle part, c'est ce que le controller a transmit au template, c'est à dire les informations d'un article sélectionné en BDD en fonction de l'ID transmit dans l'url#}
-{{dump(article)}}
+{# {{dump(article)}} #}
 
 {# Affichage des messages utilisateurs stockés en session (addFlash dans le controller) #}
 {# app: objet twig qui contient toutes les informations de la session en cours #}
@@ -24,8 +24,8 @@
 <div class="col-md-12">
       <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm position-relative">
         <div class="col {{ col }} p-4 d-flex flex-column position-static">
-          <strong class="d-inline-block mb-2 text-primary">World</strong>
-          <h3 class="mb-0">Featured post</h3>
+          <strong class="d-inline-block mb-2 text-primary">{{article.category.titre}}</strong>
+          <h3 class="mb-0">{{article.titre}}</h3>
           <div class="mb-1 text-muted">{{article.date|date('d/m/Y')}}</div>
           <p class="card-text mb-auto">{{article.contenu|striptags}}</p>
 
@@ -42,7 +42,61 @@
           </div>
         {% endif %}
         
-      </div>
+      </div> 
+
+      <h2 class="mt-4">Donner votre avis</h2>
+      {% if app.user %}
+        {{ form_start(formComment) }}
+
+          {{ form_widget(formComment) }}
+
+          <button type="submit" class="btn btn-dark">Poster</button>
+
+        {{ form_end(formComment) }}
+        {% else %}
+        <p class="text-secondary"> <a class="link-secondary" href="{{path('app_login')}}">Identifiez-vous</a> ou <a class="link-secondary" href="{{path('app_register')}}">créez votre compte</a>  pour poster un commentaire</p>
+      {% endif %}
+      {#
+        Exo : Réaliser un formulaire permettant d'insérer des nouveaux commentaires en BDD
+        1.Créer le formulaire à partir de l'entité comment (make:form)
+        2.Dans le controller, il faut importer et créer le formulaire (createForm)
+        3.Afficher le formulaire sur le template (form_start() / form_row())
+        4.A la validation du formulaire, exécuter la requête d'insertion (persist()/ flush())
+        5.Après l'insertion, rediriger l'internaute et afficher un message de validation (addFlash)
+        6. Faites en sorte d'afficher 'soyez le premier à poster un commentaire' si aucun commentaire n'est associé à l'article 
+       #}
+      
+      <h2>Derniers avis</h2>
+      {# article.comments est un ensemble de résultats qui contient tous les commentaires liés à l'article stocké en BDD #}
+      {# En sélectionnant l'article en BDD, nous avons automatiquement accès à toutes les correspondances dans les autres tables sql (relation bi-directionnelle) #}
+      {# comment est une variable qui réceptionne 1 ligne de commentaire par tour de boucle #}
+
+      {# Si article.comments N'EST PAS VIDE, cela veut dire qu'il y a des commentaires postés, on entre dans le IF #}
+      {% if article.comments is not empty %}
+      {% for comment in article.comments %}
+
+        {# {{ dump(comment) }} #}
+        <div class="d-flex">
+
+          <div class="col-4">
+
+            <p>publié {{ comment.auteur }} <small>(le {{ comment.date|date('d/m/Y')}} à {{ comment.date|date('H:i:s')}})</small></p>
+            
+
+          </div>
+          <div class="col-8">
+            <p>Commentaire: {{ comment.commentaire }}</p>
+          </div>
+          
+        </div>
+
+        {% endfor %}
+        {# Sinon aucun commentaire posé, on entre dans le ELSE #}
+        {% else %}
+
+          <p class="fst-italic mb-5">Soyez le premier à donner votre avis</p>
+      {% endif %}
+
     </div>
 
 {% endblock %}

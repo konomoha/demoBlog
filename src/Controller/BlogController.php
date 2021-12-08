@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Comment;
 use App\Form\ArticleType;
+use App\Form\CommentFormType;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -51,7 +53,7 @@ class BlogController extends AbstractController
         //findAll(): méthode issue de la classe ArticleRepository permettant de sélectionner l'ensemble de la table SQL et de récupérer un tableau multi contenant l'ensemble des articles stockés en BDD
 
         $articles=$repoArticle->findAll(); //SELECT * FROM article + Fectch_ALL
-        // dump($articles);
+        // dd($articles);
 
         return $this->render('blog/blog.html.twig', [
             'articles'=> $articles // on transmet au template les articles sélectionnés en BDD afin que twig traite l'affichage
@@ -211,8 +213,32 @@ class BlogController extends AbstractController
     // Méthode permettant d'afficher le détail d'un article.
     // On défini une route 'paramétrée' {id}, ici la route permet de recevoir l'id d'un article stocké en BDD
     #[Route('/blog/{id}', name:'blog_show')]
-    public function blogShow(Article $article): Response
+    public function blogShow(Article $article, Request $request, EntityManagerInterface $manager): Response
     {
+        //méthode mise à disposition par symfony retourne un objet App\Entity\Article contenant toutes les données de l'utilisateur authentifié
+        $user = $this->getUser();
+        dd($user);
+        
+        $comment = new Comment;
+        $formComment= $this->createForm(CommentFormType::class, $comment);
+
+        //$comment->setAuteur($_POST['auteur'])
+        //$comment->setCommentaire($_POST['commentaire'])
+        $formComment->handleRequest($request);
+
+        if($formComment->isSubmitted() && $formComment->isValid())
+        {
+            $comment->setDate(new \DateTime())
+                    ->setArticle($article); // on relie le commentaire l'article
+            // dd($comment);
+
+            $manager->persist($comment);
+            $manager->flush();
+
+            $this->addFlash('success', "Félicitations! Votre commentaire a bien été posté!");
+            return $this->redirectToRoute('blog_show', ['id' => $article->getId()]);
+        }
+     
         /*
             Ici, nous envoyons un ID dans l'url et nous imposons en argument un objet issu de l'entité Article donc la table SQL
             Donc symfony est capable de sélectionner en BDD l'article en fonction de l'id passé dans l'url et de l'envoyer automatiquement en argument de la méthode blogShow() dans la variable de réception $article
@@ -227,7 +253,8 @@ class BlogController extends AbstractController
 
         // L'id transmit dans la route '/blog/5' est transmit automatiquement en argument de la méthode blogShow($id) dans la variable de réception $id
         // dd($id);
-        return $this->render('blog/blog_show.html.twig',[ 'article'=>$article //On transmet au template l'article sélectionné en BDD afin que twig puisse traiter et afficher les données sur la page
+        return $this->render('blog/blog_show.html.twig',[ 'article'=>$article, //On transmet au template l'article sélectionné en BDD afin que twig puisse traiter et afficher les données sur la page
+        'formComment'=>$formComment->createView()
     ]);
     }
 }
