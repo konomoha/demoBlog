@@ -1,0 +1,42 @@
+{% extends "base_admin.html.twig" %}
+
+{% block title %}
+    Blog Symfony | Gestion des articles
+{% endblock %}
+
+{% block body %}
+
+    <table class="table table-striped text-center s">
+        <tr>
+        {% for data in colonnes %}
+        {# On exclue la colonne 'id' #}
+        {% if data != 'id' %}
+                {# capitalize : filtre Twig permettant de mettre la 1ère lettre de la chaine de caractères en majuscule #}
+            <th class="border border-1 border-dark">{{data|capitalize}}</th>
+            
+        {% endif %}
+            
+        {% endfor %}
+            <th class="border border-1 border-dark">CAT</th>
+            <th class="border border-1 border-dark">Nb Comm.</th>
+            <th class="border border-1 border-dark">Action</th>
+        </tr><tr>
+
+        {% for data in articles %}
+            <tr>
+                <td>{{ data.titre}}</td>
+                <td>{{ data.contenu|slice(0,200)}}</td>
+                <td>{{ data.photo}}</td>
+                <td>{{ data.date|date('m/d/Y')}}</td>
+                <td>{{ data.category.titre}}</td>
+                <td>{{ data.comments|length}}</td>
+                <td><a href=""><span > <i class="bi bi-trash"></i></span></a>
+                <a href=""><span><i class="bi bi-caret-up-square"></i></span></a></td>
+            </tr>
+        {% endfor %}
+    
+    <tr></table>
+
+
+    
+{% endblock %}

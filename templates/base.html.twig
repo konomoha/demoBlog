@@ -53,7 +53,7 @@
                 {# Si app.user retourne TRUE, cela veut dire qu'1 internaute est authentifié, on entre dans le IF #}
                 {% if app.user %}
 
-                    <a class="link-secondary" href="#">Bonjour <strong>{{app.user.prenom}} {{app.user.nom}}</strong></a>
+                    <a class="link-secondary" href="{{path('app_profil')}}">Bonjour <strong>{{app.user.prenom}} {{app.user.nom}}</strong></a>
 
                     {% else %}
 
@@ -71,6 +71,11 @@
                     <a class="link-secondary" href="#" aria-label="Search">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="mx-3" role="img" viewBox="0 0 24 24"><title>Search</title><circle cx="10.5" cy="10.5" r="7.5"/><path d="M21 21l-5.2-5.2"/></svg>
                     </a>
+
+                    {# is_granted(): fonction Twig qui vérifie si l'utilisateur a un ROLE ADMIN enregistré dans la session donc en BDD #}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a class="btn btn-sm btn-outline-secondary me-2" href="{{ path('app_admin')}}">BACKOFFICE</a>
+                    {% endif %}
 
                     {% if app.user %}
 
@@ -110,8 +115,8 @@
         
             <div class="p-4 p-md-5 mb-4 text-white rounded bg-dark">
                 <div class="col-md-6 px-0">
-                    <h1 class="display-4 fst-italic">Musique Maestro !</h1>
-                    <p class="lead my-3">Why ask your head? It's your hips that are swinging !</p>
+                    <h1 class="display-4 fst-italic">The way of the Artist</h1>
+                    <p class="lead my-3">Master the basics, and you've mastered the core of it all.</p>
                     <p class="lead mb-0"><a href="{{path('blog')}}" class="text-white fw-bold">Accès au blog...</a></p>
                 </div>
             </div>

@@ -1,0 +1,12 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Blog Symfony | Backoffice{% endblock %}
+
+{% block body %}
+
+    <h1 class="text-center my-5">Bienvenue dans votre Backoffice, {{app.user.prenom}} {{app.user.nom}}!</h1>
+
+    <h4 class="text-center mb-5">vous êtes dans votre espace BackOffice</h4>
+
+    <p class="text-center">Vous pouvez ici gérer la totalité de votre Blog: les articles, catégories, commentaires et utilisateurs.</p>
+{% endblock %}

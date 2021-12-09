@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Blog Symfony | Profil{% endblock %}
+
+{% block body %}
+
+{% if profildata.roles.0 == 'ROLE_ADMIN'%}
+
+    <p class="text-center text-secondary">Vous êtes administrateur du site</p>
+
+{% endif %}
+ 
+ <h1>Profil de {{ profildata.prenom}}{{profildata.nom}}</h1>
+
+ {# {{dump(profildata)}} #}
+
+ <div class="mx-auto">
+
+    <p><span>Nom:</span> {{ profildata.nom}}</p>
+    <p><span>prenom:</span> {{ profildata.prenom }}</p>
+    <p><span>adresse:</span> {{ profildata.adresse }}</p>
+    <p><span>ville:</span> {{ profildata.ville }}</p>
+    <p><span>codepostal:</span> {{ profildata.codepostal }}</p>
+    <button><a href="{{path('app_profil_edit', {'id': profildata.id})}}">Modifier</a></button>
+ </div>
+
+ 
+
+{% endblock %}
