@@ -63,8 +63,11 @@ class RegistrationController extends AbstractController
         3.Cette méthode renvoie un template 'registration/profil.html.twig'
         4.Afficher dans ce template les informations de l'utilisateur
     */
-    #[Route('/profil', name: 'app_profil')]
-    public function userProfil(
-        
-    )
+    #[Route('/profil', name: 'profil')]
+    public function userProfil(): Response
+    {
+        return $this->render('registration/profil.html.twig', [
+            'profildata'=>])
+
+    }
 }
