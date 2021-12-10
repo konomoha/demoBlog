@@ -217,7 +217,7 @@ class BlogController extends AbstractController
     {
         //méthode mise à disposition par symfony retourne un objet App\Entity\Article contenant toutes les données de l'utilisateur authentifié
         $user = $this->getUser();
-        dd($user);
+        // dd($user);
         
         $comment = new Comment;
         $formComment= $this->createForm(CommentFormType::class, $comment);
