@@ -6,6 +6,14 @@
 
 {% block body %}
 
+    {% for message in app.flashes('success') %}
+
+        <div class="bg-success col-5 text-center mx-auto my-4 p-3">{{message}}</div>
+        
+    {% endfor %}
+    
+
+
     <table class="table table-striped text-center s">
         <tr>
         {% for data in colonnes %}
@@ -24,14 +32,28 @@
 
         {% for data in articles %}
             <tr>
-                <td>{{ data.titre}}</td>
-                <td>{{ data.contenu|slice(0,200)}}</td>
-                <td>{{ data.photo}}</td>
+                <td>
+                <a href="{{path('blog_show', {'id': data.id})}}">
+                    {{ data.titre}}
+                </a>
+                </td>
+
+                <td>{{ data.contenu|striptags|slice(0,100)}}[...]</td>
+
+                {# Si la valeur de la photo en BDD est différente de null, cela veut dire qu'une photo a bien été téléchargée, on entre dans le IF et on affiche l'image #}
+                {% if data.photo != null %}
+                    <td><img src="{{ asset('uploads/photos/' ~ data.photo)}}" alt="{{data.titre}}"></td>
+                    {% else %}
+                    <td class="text-danger">Aucune photo uploadée</td>
+                {% endif %}
+                
                 <td>{{ data.date|date('m/d/Y')}}</td>
                 <td>{{ data.category.titre}}</td>
                 <td>{{ data.comments|length}}</td>
-                <td><a href=""><span > <i class="bi bi-trash"></i></span></a>
-                <a href=""><span><i class="bi bi-caret-up-square"></i></span></a></td>
+                <td>
+                    <a href="{{path('app_admin_article_remove', {'id': data.id})}}" onclick="return(confirm('Voulez-vous vraiment supprimmer l\'article n° {{data.id}}?'));"><span > <i class="bi bi-trash"></i></span></a>
+                    <a href="{{path('app_admin_article_update', {'id': data.id})}}"><span><i class="bi bi-caret-up-square"></i></span></a>
+                </td>
             </tr>
         {% endfor %}
     
