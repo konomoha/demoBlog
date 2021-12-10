@@ -63,93 +63,11 @@ class BackOfficeController extends AbstractController
     }
 
     #[Route('/admin/article/add', name:'app_admin_article_add')]
-    #[Route('/admin/article/{id}/update', name:'app_admin_article_update')]
-
-    public function admin_article_form(Article $article = null, EntityManagerInterface $manager, Request $request, SluggerInterface $slugger): Response
+    public function admin_article_form(): Response
     {
-        if($article)
-        {
-            $photoActuelle = $article->getPhoto();
-          
-        }
-        
-
-        if(!$article)
-
-        {
-            $article = new Article;
-        }
-        
-        
-
-        $formArticle = $this->createForm(ArticleType::class, $article);
-        $formArticle->handleRequest($request);
-
-        if($formArticle->isSubmitted() && $formArticle->isValid())
-        {
-            if(!$article->getId())
-            $article->setDate(new \DateTime());
-
-            //Photo
-           
-            $photo = $formArticle->get('photo')->getData();
-            
-
-                if($photo)
-                {
-                    $nomphoto = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
-                    //sécuriser le nom de la photo
-                    $nomphotosecure = $slugger->slug($nomphoto);
-
-                    $newnamephoto = $nomphotosecure. '-' . uniqid() .'.'. $photo->guessExtension();
-
-                    try
-                    {
-                        $photo->move(
-                            $this->getparameter('photo_directory'), $newnamephoto
-                        );
-                    }
-                    catch(FileException $e)
-                    {
-
-                    }
-
-                    $article->setPhoto($newnamephoto);
-
-
-                }
-
-                else
-                {
-                    if(isset($photoActuelle))
-                    {
-                        $article->setPhoto($photoActuelle);
-                    }
-
-                    else
-                    {
-                        $article->setPhoto(null);
-                    }
-                    
-                }
-            
-
-            // dd($photo);
-
-            $manager->persist($article);
-
-            $manager->flush();
-           
-        } 
-        
-        return $this->render('back_office/admin_article_form.html.twig',[
-                'formArticle'=>$formArticle->createView(),
-                'photoActuelle' => $article->getPhoto()]);
-    } 
+        return $this->render('admin_article_form.html.twig');
+    }
     
-    
-
-
 }
 /*
     Exo: création d'une nouvelle méthode permettant d'insérer et de modifier 1 article en BDD
