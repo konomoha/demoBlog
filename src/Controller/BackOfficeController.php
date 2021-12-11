@@ -3,10 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Category;
 use App\Form\ArticleType;
+use App\Form\CategoryFormType;
+use PhpParser\Node\Expr\Isset_;
+use Doctrine\ORM\EntityRepository;
 use App\Repository\ArticleRepository;
+use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\Repository\RepositoryFactory;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -63,9 +69,19 @@ class BackOfficeController extends AbstractController
     }
 
     #[Route('/admin/article/add', name:'app_admin_article_add')]
-    public function admin_article_form(Request $request, EntityManagerInterface $manager, SluggerInterface $slugger): Response
+    #[Route('/admin/article/{id}/update', name:'app_admin_article_update')]
+    public function admin_article_form(Article $article=null, Request $request, EntityManagerInterface $manager, SluggerInterface $slugger): Response
     {
-        $article = new Article;
+        if(!$article)
+        {
+            $article = new Article;
+        }
+
+       if($article)
+       {
+           $photoActuelle = $article->getPhoto();
+       }
+        
 
         $formArticle = $this->createForm(ArticleType::class, $article);
 
@@ -73,8 +89,11 @@ class BackOfficeController extends AbstractController
 
         if($formArticle->isSubmitted() && $formArticle->isValid())
         {
-
-            $article->setDate(new \DateTime());
+            if(!$article->getId())
+            {
+                 $article->setDate(new \DateTime());
+            }
+           
 
             //Traitement de la photo
             
@@ -111,22 +130,126 @@ class BackOfficeController extends AbstractController
                 }
 
                 $article->setPhoto($nouveaunomphoto);
+
             }
 
+            else
+            {
+                //Si l'article possède une image mais qu'on ne souhaite pas la modifier, on renvoie la même image en BDD
+                if(Isset($photoActuelle))
+                {
+                    $article->setPhoto($photoActuelle);
+                }
+
+                //Sinon on crée un nouvel article mais on ne souhaite pas uploader d'image, alors on renvoie NULL pour le champ photo dans la BDD
+                else
+                {
+                    $article->setPhoto(null);
+                }
+
+            }
+            if($article->getId())
+            {
+                $txt = 'modifié';
+            }
+            else
+            {
+                $txt = 'enregistré';
+            }
+            
             $manager->persist($article);
             $manager->flush();
-            $this->addFlash('success', 'Insertion réussie');
+            $this->addFlash('success', "Article $txt!");
             return $this->redirectToRoute('app_admin_articles');
         }
         
        
         return $this->render('back_office/admin_article_form.html.twig', [
-            'formArticle'=>$formArticle->createView()
+            'formArticle'=>$formArticle->createView(),
+            'photoActuelle'=> $article->getPhoto()
+        ]);
+    }
+
+    #[Route('/admin/categories', name:'app_admin_categories')]
+    #[Route('/admin/categories/{id}/delete', name:'app_admin_categories_delete')]
+    public function adminCategories(CategoryRepository $repoCategory, EntityManagerInterface $manager, Category $catRemove=null):Response
+    {
+        $colonnes = $manager->getClassMetadata(Category::class)->getFieldNames();
+        // dd($colonnes);
+        $category = $repoCategory->findAll();
+        
+       
+        if($catRemove)
+        { 
+            $article = $catRemove->getArticles();
+            $nbarticle = count($article);
+            $titre = $catRemove->getTitre();
+
+            if($nbarticle == 0)
+            {
+                // dd($article);
+                $manager->remove($catRemove);
+                $manager->flush();
+                $this->addFlash('success', "La catégorie $titre a bien été supprimée");
+                return $this->redirectToRoute('app_admin_categories');
+
+            }
+
+            else
+            {
+                $this->addFlash('error', "La catégorie $titre est encore liée à un ou plusieurs articles!");
+                return $this->redirectToRoute('app_admin_categories');
+            }
+
+        }
+        
+        return $this->render('back_office/admin_categories.html.twig', [
+            'category'=>$category,
+            'colonnes'=>$colonnes
+        ]);
+    }
+
+    #[Route('/admin/categories/add', name:'app_admin_categories_form')]
+    #[Route('/admin/categories/{id}/update', name:'app_admin_categories_update')]
+    public function addCategory(Request $request, EntityManagerInterface $manager, Category $category=null):Response
+    {
+        if(!$category)
+        {
+            $category = new Category;
+        }
+        
+
+        $categoryForm = $this->createForm(CategoryFormType::class, $category);
+        $categoryForm->handleRequest($request);
+
+        if($categoryForm->isSubmitted() && $categoryForm->isValid())
+        {
+            $titre = $category->getTitre();
             
+            if($category->getId())
+            {
+                $txt = "modifiée";
+            }
+
+            else
+            {
+                $txt = "ajoutée";
+            }
+
+            $manager->persist($category);
+            $manager->flush();
+            $this->addFlash('success', "Félicitations! la catégorie $titre a bien été $txt!");
+            return $this->redirectToRoute('app_admin_categories');
+
+        }
+        return $this->render('back_office/admin_categorie_form.html.twig', [
+            'categoryForm'=>$categoryForm->createView()
         ]);
     }
     
 }
+
+
 /*
     Exo: création d'une nouvelle méthode permettant d'insérer et de modifier 1 article en BDD
     1. Créer une route '/admin/article/add' (name:app_admin_article_add)

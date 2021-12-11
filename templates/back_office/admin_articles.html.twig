@@ -14,7 +14,8 @@
     
 
 
-    <table class="table table-striped text-center s">
+    <table class="table table-striped text-center s" id="table-backoffice">
+    <thead>
         <tr>
         {% for data in colonnes %}
         {# On exclue la colonne 'id' #}
@@ -28,7 +29,9 @@
             <th class="border border-1 border-dark">CAT</th>
             <th class="border border-1 border-dark">Nb Comm.</th>
             <th class="border border-1 border-dark">Action</th>
-        </tr><tr>
+        </tr>
+    </thead>
+    <tbody>
 
         {% for data in articles %}
             <tr>
@@ -52,11 +55,11 @@
                 <td>{{ data.comments|length}}</td>
                 <td>
                     <a href="#" onclick="return(confirm('Voulez-vous vraiment supprimmer l\'article n° {{data.id}}?'));"><span > <i class="bi bi-trash"></i></span></a>
-                    <a href="#"><span><i class="bi bi-caret-up-square"></i></span></a>
+                    <a href="{{path('app_admin_article_update', {'id': data.id})}}"><span><i class="bi bi-caret-up-square"></i></span></a>
                 </td>
             </tr>
         {% endfor %}
-    
+    </tbody>
     <tr></table>
 
 

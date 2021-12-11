@@ -1,0 +1,48 @@
+{% extends "base_admin.html.twig" %}
+
+{% block title %}
+    Blog Symfony | Catégories
+{% endblock %}
+
+{% block body %}
+    <h1 class="text-center">Catégories</h1>
+
+    {% for message in app.flashes('success') %}
+
+        <div class="bg-success col-5 text-center mx-auto my-4 p-3">{{message}}</div>
+        
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+
+        <div class="bg-warning col-5 text-center mx-auto my-4 p-3">{{message}}</div>
+        
+    {% endfor %}
+
+    <table class="table table-bordered col-8 mx-auto">
+        <tr>
+            {% for data in colonnes %}
+            
+            <th class="text-center">{{data}}</th>
+        
+            {% endfor %}
+            <th class="text-center">Nombre d'articles liés</th>
+            <th class="text-center">Action</th>
+       </tr>
+        {% for data in category %}
+           <tr> 
+                <td class="text-center">{{ data.id }}</td>
+                <td class="text-center">{{ data.titre }}</td>
+                <td class="text-center">{{ data.description }}</td>
+                <td class="text-center">{{data.articles|length}}</td> 
+                <td class="text-center">
+                    <a href="{{path('app_admin_categories_delete', {'id': data.id})}}"><span > <i class="bi bi-trash"></i></span></a>
+                    <a href="{{path('app_admin_categories_update', {'id': data.id})}}"><span><i class="bi bi-caret-up-square"></i></span></a>
+                </td>
+        </tr>
+        {% endfor %}
+      
+    </table>
+
+    <button><a href="{{path('app_admin_categories_form')}}">Ajouter une catégorie</a></button>
+{% endblock %}

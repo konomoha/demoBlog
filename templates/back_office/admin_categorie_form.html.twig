@@ -1,0 +1,20 @@
+{% extends "base_admin.html.twig" %}
+
+{% block title %}
+    Blog Symfony | Ajout Catégorie
+{% endblock %}
+
+{% block body %}
+<h1 class="text-center">Ajout d'une catégorie</h1>
+
+{{form_start(categoryForm)}}
+
+    {{form_row(categoryForm.titre)}}
+
+    {{form_row(categoryForm.description)}}
+
+    <button>Enregistrer</button>
+{{form_end(categoryForm)}}
+
+
+{% endblock %}

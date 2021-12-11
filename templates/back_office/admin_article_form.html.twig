@@ -14,6 +14,13 @@ Blog Symfony | Ajout article
     {{ form_row(formArticle.category) }}
     {{ form_row(formArticle.photo) }}
 
+    {% if photoActuelle != null %}
+        <p><em>Votre photo actuelle</em>
+        <img src="{{ asset('uploads/photos/' ~ photoActuelle)}}" alt="" class="col-4 img-responsive d-block">
+        </p>
+        
+    {% endif %}
+
     <button>Enregistrer</button>
 
 {{ form_end(formArticle)}}
