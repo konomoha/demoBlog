@@ -51,8 +51,8 @@
                 <td>{{ data.category.titre}}</td>
                 <td>{{ data.comments|length}}</td>
                 <td>
-                    <a href="{{path('app_admin_article_remove', {'id': data.id})}}" onclick="return(confirm('Voulez-vous vraiment supprimmer l\'article n° {{data.id}}?'));"><span > <i class="bi bi-trash"></i></span></a>
-                    <a href="{{path('app_admin_article_update', {'id': data.id})}}"><span><i class="bi bi-caret-up-square"></i></span></a>
+                    <a href="#" onclick="return(confirm('Voulez-vous vraiment supprimmer l\'article n° {{data.id}}?'));"><span > <i class="bi bi-trash"></i></span></a>
+                    <a href="#"><span><i class="bi bi-caret-up-square"></i></span></a>
                 </td>
             </tr>
         {% endfor %}

@@ -63,9 +63,67 @@ class BackOfficeController extends AbstractController
     }
 
     #[Route('/admin/article/add', name:'app_admin_article_add')]
-    public function admin_article_form(): Response
+    public function admin_article_form(Request $request, EntityManagerInterface $manager, SluggerInterface $slugger): Response
     {
-        return $this->render('admin_article_form.html.twig');
+        $article = new Article;
+
+        $formArticle = $this->createForm(ArticleType::class, $article);
+
+        $formArticle->handleRequest($request);
+
+        if($formArticle->isSubmitted() && $formArticle->isValid())
+        {
+
+            $article->setDate(new \DateTime());
+
+            //Traitement de la photo
+            
+            $photo = $formArticle->get('photo')->getData();
+            // dd($photo);
+
+            
+            if($photo)
+            {
+            
+                $nomphoto = pathinfo($photo->getClientOriginalName(), PATHINFO_FILENAME);
+
+                // dd($nomphoto);
+                
+                $securenomphoto = $slugger->slug($nomphoto);
+
+                // dd($securenomphoto);
+
+                $nouveaunomphoto = $securenomphoto.'-'. uniqid().'.'. $photo->guessExtension();
+
+                // dd($nouveaunomphoto);
+
+                try
+                {
+                    $photo->move(
+                        $this->getParameter('photo_directory'),
+                        $nouveaunomphoto
+                    );
+
+                }
+                catch(FileException $e)
+                {
+
+                }
+
+                $article->setPhoto($nouveaunomphoto);
+            }
+
+            $manager->persist($article);
+            $manager->flush();
+            $this->addFlash('success', 'Insertion réussie');
+            return $this->redirectToRoute('app_admin_articles');
+        }
+        
+       
+        return $this->render('back_office/admin_article_form.html.twig', [
+            'formArticle'=>$formArticle->createView()
+            
+        ]);
     }
     
 }
@@ -78,4 +136,5 @@ class BackOfficeController extends AbstractController
     5.Afficher le formulaire sur le template
     6.Gérer l'upload de la photo
     7.Dans la méthode adminArticleForm(), réaliser le traitement permettant d'insérer un nouvel article en BDD (persist()/ flush())
+    8. fonction delete et update
 */
