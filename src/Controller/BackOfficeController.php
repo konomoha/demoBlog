@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityRepository;
 use App\Repository\ArticleRepository;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\Repository\RepositoryFactory;
 use Symfony\Component\HttpFoundation\Response;
@@ -208,7 +209,7 @@ class BackOfficeController extends AbstractController
             'colonnes'=>$colonnes
         ]);
     }
-
+    
     #[Route('/admin/categories/add', name:'app_admin_categories_form')]
     #[Route('/admin/categories/{id}/update', name:'app_admin_categories_update')]
     public function addCategory(Request $request, EntityManagerInterface $manager, Category $category=null):Response
