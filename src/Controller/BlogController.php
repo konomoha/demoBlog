@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\Comment;
+use App\Entity\Category;
 use App\Form\ArticleType;
 use App\Form\CommentFormType;
 use App\Repository\ArticleRepository;
+use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,10 +30,24 @@ class BlogController extends AbstractController
         ]);
     }
 
+    // Cette méthode permet de sélectionner toutes les catégories de la BDD mais ne possède pas de route, les catégories seront intégrées dans base.html.twig
+    public function allCategory(CategoryRepository $repoCategory)
+    {
+        $categories = $repoCategory->findAll();
+
+        return $this->render('blog/categories_list.html.twig', [
+            'categories' => $categories
+        ]);
+    }
 
     #[Route('/blog', name: 'blog')]
-    public function blog(ArticleRepository $repoArticle): Response
+    #[Route('/blog/categorie/{id}', name:'blog_categorie')]
+    public function blog(ArticleRepository $repoArticle, Category $category=null): Response
     {
+
+        // dd($category->getArticles());
+
+        
         /* 
             Injections de dépendances : c'est un des fondements de Symfony, ici notre méthode DEPEND de la classe ArticleRepository pour fonctionner correctement 
             Ici, symfony comprend que la méthode blog() attend en argument un objet issu de la classe ArticleRepository, automatiquement Symfony envoie une instance de cette classe en argument de cette classe.
@@ -52,9 +68,21 @@ class BlogController extends AbstractController
         
         //findAll(): méthode issue de la classe ArticleRepository permettant de sélectionner l'ensemble de la table SQL et de récupérer un tableau multi contenant l'ensemble des articles stockés en BDD
 
-        $articles=$repoArticle->findAll(); //SELECT * FROM article + Fectch_ALL
-        // dd($articles);
+        //Si la condition retourne TRUE, cela veut dire que l'utilisateur a cliqué sur le lien d'une catégorie dans la nav et par conséquent, $category contient une catégorie stockée en BDD, alors on entre dans le IF
+        if($category)
+        {
+            //Grâce aux relations bi-directionnelles, lorsque nous sélectionnons une catégorie en BDD, nous avons accès automatiquement à tous les articles liés à cette catégorie
+            //getArticles() retourne un array multi contenant tous les articles liés à la catégorie transmise dans l'URL
+            $articles = $category->getArticles();
+        }
 
+        //Sinon, aucune catégorie n'est transmise dans l'URL, alors on sélectionne tous les articles de la BDD
+        else
+        {
+            $articles=$repoArticle->findAll(); //SELECT * FROM article + Fectch_ALL
+        }
+        
+        // dd($articles);
         return $this->render('blog/blog.html.twig', [
             'articles'=> $articles // on transmet au template les articles sélectionnés en BDD afin que twig traite l'affichage
         ]);
@@ -220,7 +248,10 @@ class BlogController extends AbstractController
         // dd($user);
         
         $comment = new Comment;
-        $formComment= $this->createForm(CommentFormType::class, $comment);
+        $formComment= $this->createForm(CommentFormType::class, $comment, ['commentFormFront'=>true]
+        // on indique dans quelle condition IF on entre dans le fichier 'App\From\CommentType et quel formulaire nous affichons
+        );
+
 
         //$comment->setAuteur($_POST['auteur'])
         //$comment->setCommentaire($_POST['commentaire'])
@@ -228,8 +259,15 @@ class BlogController extends AbstractController
 
         if($formComment->isSubmitted() && $formComment->isValid())
         {
+            // dd($this->getUser());
+            //getUser() : méthode de symfony qui retourne un objet (App\Entity\user) contenant les informations de l'utilisateur authentifié sur le blog
+            $prenom = $this->getUser()->getPrenom();
+            $nom = $this->getUser()->getNom();
+            $user = $prenom.' '.$nom;
             $comment->setDate(new \DateTime())
-                    ->setArticle($article); // on relie le commentaire l'article
+                    ->setArticle($article) // on relie le commentaire l'article
+                    ->setAuteur($user);
+                    
             // dd($comment);
 
             $manager->persist($comment);

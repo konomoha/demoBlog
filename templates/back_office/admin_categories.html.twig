@@ -7,16 +7,11 @@
 {% block body %}
     <h1 class="text-center">Catégories</h1>
 
-    {% for message in app.flashes('success') %}
+    {% for label, messages in app.flashes(['success', 'danger']) %}
+        {% for message in messages %}
 
-        <div class="bg-success col-5 text-center mx-auto my-4 p-3">{{message}}</div>
-        
-    {% endfor %}
-
-    {% for message in app.flashes('error') %}
-
-        <div class="bg-warning col-5 text-center mx-auto my-4 p-3">{{message}}</div>
-        
+            <div class="bg-{{ label }} col-5 text-center mx-auto my-4 p-3 text-white">{{message}}</div>
+        {% endfor %}
     {% endfor %}
 
     <table class="table table-bordered col-8 mx-auto">
@@ -35,16 +30,13 @@
                 <td class="text-center">{{ data.titre }}</td>
                 <td class="text-center">{{ data.description }}</td>
                 <td class="text-center">{{data.articles|length}}</td> 
-                <td class="text-center">
-                    <a href="{{path('app_admin_categories_delete', {'id': data.id})}}"><span > <i class="bi bi-trash"></i></span></a>
+                <td class="text-center d-flex flex-column">
+                    <a href="{{path('app_admin_categories_delete', {'id': data.id})}}" onclick="return(confirm('Voulez-vous réellement supprimer la catégorie {{ data.titre}}'));"><span > <i class="bi bi-trash"></i></span></a>
                     <a href="{{path('app_admin_categories_update', {'id': data.id})}}"><span><i class="bi bi-caret-up-square"></i></span></a>
+                    <a href="{{path('app_admin_categories_add')}}" title="ajouter une catégorie"><i class="bi bi-plus-square-fill"></i></span></a>
                 </td>
         </tr>
         {% endfor %}
       
-    </table>
-
-    <button><a href="{{path('app_admin_categories_form')}}">Ajouter une nouvelle catégorie</a></button>
-
-    
+    </table>    
 {% endblock %}

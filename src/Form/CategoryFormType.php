@@ -24,7 +24,7 @@ class CategoryFormType extends AbstractType
                 'constraints' => [
                     new Length([
                         'min' => 3, 
-                        'max' => 50,
+                        'max' => 15,
                         'minMessage' => "Titre trop court",
                         'maxMessage'=> "Titre trop long"
                     ]),
@@ -36,7 +36,6 @@ class CategoryFormType extends AbstractType
             ->add('description', TextareaType::class, [
                 'attr'=> [
                     'placeholder' => "Saisir la description de la catégorie",
-                    'row' => 10
                 ],
                 'required'=>false,
                 'constraints'=>[

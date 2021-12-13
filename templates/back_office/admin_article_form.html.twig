@@ -1,11 +1,25 @@
 {% extends "base_admin.html.twig" %}
 
 {% block title %}
-Blog Symfony | Ajout article
+Blog Symfony | 
+{% if editMode %}
+    modification Article
+    
+    {% else %}
+    Ajout article
+{% endif %}
+
 {% endblock %}
 
 {% block body %}
-<h1 class="text-center">Ajouter un article</h1>
+
+<h1 class="text-center">
+        {% if editMode %}
+            Modifier un article
+            {% else %}
+            Ajouter un article
+        {% endif %}   
+</h1>
 
 {{ form_start(formArticle)}}
 

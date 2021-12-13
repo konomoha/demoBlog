@@ -5,9 +5,9 @@
 {% endblock %}
 
 {% block body %}
-<h1 class="text-center">Ajout d'une catégorie</h1>
+<h1 class="text-center">Nouvelle catégorie</h1>
 
-{{form_start(categoryForm)}}
+{{form_start(categoryForm, {'attr':{'class':'col-6 mx-auto'}}) }}
 
     {{form_row(categoryForm.titre)}}
 

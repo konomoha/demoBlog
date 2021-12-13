@@ -1,0 +1,45 @@
+{% extends "base_admin.html.twig" %}
+
+{% block title %}
+Blog BlogSymfony | Commentaires
+    
+{% endblock %}
+
+{% block body %}
+<h1 class="text-center">Liste des Commentaires</h1>
+
+{% for message in app.flashes ('success') %}
+
+    <div class="bg-success col-5 text-center mx-auto my-4 p-3 text-white">{{ message }}</div>
+
+{% endfor %}
+
+    <table class="table table-striped text-center s" id="table-comments">
+    <thead>
+        <tr >
+            {% for data in colonnes %}
+            
+                <th class="text-center p-2">{{data|capitalize}}</th>
+            
+            {% endfor %}
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for data in commentaires %}
+            <tr>
+                <td class="text-center p-3">{{ data.id}}</td>
+                <td class="text-center p-3">{{ data.auteur}}</td>
+                <td class="text-center p-3">{{ data.commentaire|striptags}}</td>
+                <td class="text-center p-3">{{ data.date|date('d/m/Y')}}</td>
+                <td>
+                    <a href="{{path('app_admin_comments_delete', {'id': data.id})}}" onclick="return(confirm('Voulez-vous vraiment supprimmer l\'article n° {{data.id}}?'));"><span > <i class="bi bi-trash"></i></span></a>
+                    <a href="{{path('app_admin_comments_update', {'id': data.id })}}"><span><i class="bi bi-caret-up-square"></i></span></a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+
+    </table>
+{% endblock %}
