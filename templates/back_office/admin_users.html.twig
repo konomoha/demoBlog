@@ -1,0 +1,59 @@
+{% extends "base_admin.html.twig" %}
+{% block title %}
+    Blog Symfony | User List
+{% endblock %}
+
+{% block body %}
+
+    {% for message in app.flashes('success') %}
+
+        <div class="bg-success col-5 text-center mx-auto my-4 p-3">{{message}}</div>
+        
+    {% endfor %}
+
+    <h1 class="text-center">Liste des Utilisateurs</h1>
+
+   
+    <table class="table table-striped text-center s" id="table-comments">
+    <thead>
+        <tr >
+            {% for data in colonnes %}
+            {% if data != 'password' %}
+            
+                <th class="text-center p-2">{{data|capitalize}}</th>
+            {% endif %}
+            
+            {% endfor %}
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for data in dataUser %}
+            <tr>
+                <td class="text-center p-3">{{ data.id}}</td>
+                <td class="text-center p-3">{{ data.email}}</td>
+                <td class="text-center p-3">
+                    {% if data.roles.0 == 'ROLE_ADMIN'%}
+                    Administrateur
+                    {% else %}
+                    Utilisateur
+                    {% endif %}
+                </td>
+                <td class="text-center p-3">{{ data.prenom}}</td>
+                <td class="text-center p-3">{{ data.nom}}</td>
+                <td class="text-center p-3">{{ data.adresse}}</td>
+                <td class="text-center p-3">{{ data.ville}}</td>
+                <td class="text-center p-3">{{ data.codePostal}}</td>
+
+
+                <td>
+                    <a href="{{path('app_admin_users', {'id': data.id})}}" onclick="return(confirm('Voulez-vous vraiment supprimmer {{data.prenom}} {{data.nom}}?'));"><span > <i class="bi bi-trash"></i></span></a>
+                    <a href="{{path('app_admin_users', {'id': data.id })}}"><span><i class="bi bi-caret-up-square"></i></span></a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+
+    </table>
+{% endblock %}

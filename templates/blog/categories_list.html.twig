@@ -1,0 +1,5 @@
+{% for data in categories %}
+
+    <a class="p-2 link-secondary" href="{{path('blog_categorie', {'id':data.id})}}">{{data.titre}}</a>
+
+{% endfor %}

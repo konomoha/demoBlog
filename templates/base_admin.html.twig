@@ -57,39 +57,40 @@
       <span class="fs-4">BACKOFFICE</span>
     </a>
     <hr>
+    {% set route_name = app.request.attributes.get('_route')%}
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a href="{{ path('app_admin') }}" class="nav-link active" aria-current="page">
+        <a href="{{ path('app_admin') }}" class="nav-link text-white {% if route_name == 'app_admin'%}active {% endif %}" aria-current="page">
           <i class="bi bi-house-door"></i>
           Home
         </a>
       </li>
       <li>
-        <a href="{{path('app_admin_article_add')}}" class="nav-link text-white">
+        <a href="{{path('app_admin_article_add')}}" class="nav-link text-white {% if route_name == 'app_admin_article_add'%}active {% endif %}">
           <i class="bi bi-speedometer"></i>
           nouvel article
         </a>
       </li>
       <li>
-        <a href="{{path('app_admin_articles')}}" class="nav-link text-white">
+        <a href="{{path('app_admin_articles')}}" class="nav-link text-white {% if route_name == 'app_admin_articles'%}active {% endif %}">
           <i class="bi bi-speedometer"></i>
           article
         </a>
       </li>
       <li>
-        <a href="{{path('app_admin_categories')}}" class="nav-link text-white">
+        <a href="{{path('app_admin_categories')}}" class="nav-link text-white {% if route_name == 'app_admin_categories'%}active {% endif %}">
           <i class="bi bi-bookmark-check"></i>
          Catégorie
         </a>
       </li>
       <li>
-        <a href="#" class="nav-link text-white">
+        <a href="{{path('app_admin_comments')}}" class="nav-link text-white {% if route_name == 'app_admin_comments'%}active {% endif %}">
           <i class="bi bi-book-half"></i>
-          Category content
+          Commentaires
         </a>
       </li>
       <li>
-        <a href="#" class="nav-link text-white">
+        <a href="{{path('app_admin_users')}}" class="nav-link text-white">
           <i class="bi bi-people-fill"></i>
           Users
         </a>

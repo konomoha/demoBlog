@@ -9,3 +9,16 @@ $(document).ready(function(){
         ]
     });
 });
+
+
+$(document).ready(function(){
+    $('#table-comments').DataTable({
+        language: {
+            url: '/js/dataTables.french.json'
+        
+        },
+        "aoColumnDefs": [
+            {'bSortable': false, 'aTargets': [4]}
+        ]
+    });
+});
