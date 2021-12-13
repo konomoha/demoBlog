@@ -34,7 +34,7 @@ Blog BlogSymfony | Commentaires
                 <td class="text-center p-3">{{ data.commentaire|striptags}}</td>
                 <td class="text-center p-3">{{ data.date|date('d/m/Y')}}</td>
                 <td>
-                    <a href="{{path('app_admin_comments_delete', {'id': data.id})}}" onclick="return(confirm('Voulez-vous vraiment supprimmer l\'article n° {{data.id}}?'));"><span > <i class="bi bi-trash"></i></span></a>
+                    <a href="{{path('app_admin_comments_delete', {'id': data.id})}}" onclick="return(confirm('Voulez-vous vraiment supprimmer le commentaire de {{data.auteur}}?'));"><span > <i class="bi bi-trash"></i></span></a>
                     <a href="{{path('app_admin_comments_update', {'id': data.id })}}"><span><i class="bi bi-caret-up-square"></i></span></a>
                 </td>
             </tr>

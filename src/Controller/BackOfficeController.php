@@ -9,6 +9,7 @@ use App\Entity\Category;
 use App\Form\ArticleType;
 use App\Form\CommentFormType;
 use App\Form\CategoryFormType;
+use App\Form\RegistrationFormType;
 use PhpParser\Node\Expr\Isset_;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityRepository;
@@ -24,6 +25,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class BackOfficeController extends AbstractController
 {
@@ -330,6 +332,62 @@ class BackOfficeController extends AbstractController
         ]);
     }
     
+    #[Route('/admin/users/add', name:'app_admin_users_add')]
+    #[Route('/admin/users/{id}/update', name:'app_admin_users_update')]
+    public function addUser(EntityManagerInterface $manager, Request $request, UserPasswordHasherInterface $userPasswordHasher):Response
+    {
+    
+            $user = new User;
+        
+        
+
+        $userForm = $this->createForm(RegistrationFormType::class, $user, ['userRegistration'=>true]);
+
+        $userForm->handleRequest($request);
+
+        if($userForm->isSubmitted() && $userForm->isValid())
+        {
+            $hash = $userPasswordHasher->hashPassword(
+                $user,
+                $userForm->get('password')->getData()
+            );
+
+            $user->setPassword($hash);
+            $newuser = $user->getNom(). ' '. $user->getPrenom();
+            $manager->persist($user);
+            $manager->flush();
+            $this->addFlash('success', "$newuser a bien été ajouté(e) à la liste des membres!");
+            return $this->redirectToRoute('app_admin_users');
+        }
+        
+        return $this->render('back_office/admin_users_form.html.twig', [
+            'userForm'=>$userForm->createView()
+        ]);
+
+       
+    }
+     #[Route('/admin/users/{id}/update', name:'app_admin_users_update')]
+     public function updateUser(User $user, EntityManagerInterface $manager, Request $request):Response
+    {
+    
+        $userForm = $this->createForm(RegistrationFormType::class, $user, ['adminUpdate'=>true]);
+
+        $userForm->handleRequest($request);
+
+        if($userForm->isSubmitted() && $userForm->isValid())
+        {
+           
+            $name = $user->getNom(). ' '. $user->getPrenom();
+            $manager->persist($user);
+            $manager->flush();
+            $this->addFlash('success', "le Role de $name a bien été modifié!");
+            return $this->redirectToRoute('app_admin_users');
+        }
+        
+        return $this->render('back_office/admin_users_update.html.twig', [
+            'userForm'=>$userForm->createView()
+        ]);
+    }
     
 }
 

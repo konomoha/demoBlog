@@ -1,0 +1,28 @@
+{% extends "base_admin.html.twig" %}
+
+{% block title %}
+    Blog Symfony| Nouvel utilisateur 
+{% endblock %}
+
+{% block body %}
+    
+    {{form_start(userForm)}}
+
+        {{ form_row(userForm.email) }}
+
+        {{ form_row(userForm.prenom) }}
+
+        {{ form_row(userForm.nom) }}
+
+        {{ form_row(userForm.adresse) }}
+
+        {{ form_row(userForm.ville) }}
+
+        {{ form_row(userForm.codePostal) }}
+
+        {{ form_row(userForm.password)}}
+
+        <button type="submit" class="btn btn-dark">Valider</button>
+    {{form_end(userForm)}}
+
+{% endblock %}

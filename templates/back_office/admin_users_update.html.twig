@@ -1,0 +1,17 @@
+{% extends "base_admin.html.twig" %}
+{% block title %}
+    Blog Symfony|Update
+{% endblock %}
+
+{% block body %}
+<h1>Profil de {{app.user.nom}}</h1>
+
+    {{form_start(userForm)}}
+
+        {{form_row(userForm.roles)}}
+
+        <button>Modifier</button>
+    {{form_end(userForm)}}
+
+
+{% endblock %}
