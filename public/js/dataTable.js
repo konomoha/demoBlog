@@ -18,7 +18,7 @@ $(document).ready(function(){
         
         },
         "aoColumnDefs": [
-            {'bSortable': false, 'aTargets': [4]}
+            {'bSortable': false, 'aTargets': [3]}
         ]
     });
 });

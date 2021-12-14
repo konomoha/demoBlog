@@ -6,6 +6,8 @@
 
 {% block body %}
 
+{{dump(articles)}}
+
     {% for message in app.flashes('success') %}
 
         <div class="bg-success col-5 text-center mx-auto my-4 p-3">{{message}}</div>
@@ -27,6 +29,7 @@
             
         {% endfor %}
             <th class="border border-1 border-dark">CAT</th>
+            <th class="border border-1 border-dark">Auteur</th>
             <th class="border border-1 border-dark">Nb Comm.</th>
             <th class="border border-1 border-dark">Action</th>
         </tr>
@@ -52,6 +55,7 @@
                 
                 <td>{{ data.date|date('m/d/Y')}}</td>
                 <td>{{ data.category.titre}}</td>
+                <td>{{data.userId.prenom}} {{data.userId.nom}}</td>
                 <td>{{ data.comments|length}}</td>
                 <td>
                     <a href="#" onclick="return(confirm('Voulez-vous vraiment supprimmer l\'article n° {{data.id}}?'));"><span > <i class="bi bi-trash"></i></span></a>

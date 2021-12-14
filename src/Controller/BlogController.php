@@ -265,6 +265,8 @@ class BlogController extends AbstractController
         {
             // dd($this->getUser());
             //getUser() : méthode de symfony qui retourne un objet (App\Entity\user) contenant les informations de l'utilisateur authentifié sur le blog
+            $user = $this->getUser();
+            $comment->setUser($user);
             $prenom = $this->getUser()->getPrenom();
             $nom = $this->getUser()->getNom();
             $user = $prenom.' '.$nom;
