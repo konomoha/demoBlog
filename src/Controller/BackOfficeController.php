@@ -257,9 +257,9 @@ class BackOfficeController extends AbstractController
 
     #[Route('/admin/comments', name:'app_admin_comments')]
     #[Route('/admin/comments/{id}/delete', name:'app_admin_comments_delete')]
-    public function adminComments(CommentRepository $comment, EntityManagerInterface $manager, Comment $commentRemove=null): Response
+    public function adminComments(CommentRepository $repoComment, EntityManagerInterface $manager, Comment $commentRemove=null): Response
     {
-        $commentaires = $comment->findAll();
+        $commentaires = $repoComment->findAll();
         // dd($commentaires);
         $colonnes = $manager->getClassMetadata(Comment::class)->getFieldNames();
         // dd($colonnes);
@@ -267,6 +267,7 @@ class BackOfficeController extends AbstractController
 
         if($commentRemove)
         {
+            //On stock l'auteur du commentaire dans une variable afin de l'intégrer dans le message de validation
             $auteur = $commentRemove->getAuteur();
             $manager->remove($commentRemove);
             $manager->flush();
@@ -282,12 +283,10 @@ class BackOfficeController extends AbstractController
     }
 
     #[Route('/admin/comments/{id}/update', name:'app_admin_comments_update')]
-    #[Route('admin/comments/add', name: 'app_admin_comments_add')]
     public function updateComment(Comment $comment, EntityManagerInterface $manager, Request $request): Response
     {
         
-        if($comment)
-        {
+       
             $formComment = $this->createForm(CommentFormType::class, $comment, ['commentFormBack'=>true]);
 
             $formComment->handleRequest($request);
@@ -301,7 +300,7 @@ class BackOfficeController extends AbstractController
                 $this->addFlash('success', "le commentaire de $auteur à bien été modifié");
                 return $this->redirectToRoute('app_admin_comments');
             }       
-        }
+        
 
         return $this->render('back_office/admin_comments_update.html.twig',[
             'formComment'=>$formComment->createView()
@@ -333,7 +332,6 @@ class BackOfficeController extends AbstractController
     }
     
     #[Route('/admin/users/add', name:'app_admin_users_add')]
-    #[Route('/admin/users/{id}/update', name:'app_admin_users_update')]
     public function addUser(EntityManagerInterface $manager, Request $request, UserPasswordHasherInterface $userPasswordHasher):Response
     {
     
@@ -385,8 +383,35 @@ class BackOfficeController extends AbstractController
         }
         
         return $this->render('back_office/admin_users_update.html.twig', [
-            'userForm'=>$userForm->createView()
+            'userForm'=>$userForm->createView(),
+            'name'=>$user->getNom().' '.$user->getPrenom()
         ]);
+
+        /*
+            if($request->query->get('op') == 'update')
+            {
+                dd('update');
+                $formUserUpdate = $this->createForm(registrationFormType::class, $user,[
+                    'adminUpdate'=>true
+                ]);
+                $formUserUpdate->handleRequest($request);
+
+                if($formuserUpdate->isSubmitted() &&  $formUserUpdate->isValid())
+                {
+                    $infos = $user->getPrenom(). ' ' . $user->getNom();
+
+                    $manager->persist($user);
+                    $manager->flush();
+
+                    $this->addFlash('success', "Role de $infos modifié");
+                    return $this->redirectToRoute('app_admin_users);
+                }
+            }
+            return $this->render('back_office/admin_users.html.twig', [
+            'formUserUpdate'=>($request->query->get('op') == 'update')? $formUserUpdate->createView(): ''
+        ]);
+            
+        */
     }
     
 }
@@ -402,4 +427,11 @@ class BackOfficeController extends AbstractController
     6.Gérer l'upload de la photo
     7.Dans la méthode adminArticleForm(), réaliser le traitement permettant d'insérer un nouvel article en BDD (persist()/ flush())
     8. fonction delete et update
+*/
+
+/* 
+    Exo: Le but est de relier les utilisateurs aux articles, lorsque l'internaute poste un article, il faut une relation entre Article et User
+    Créer une nouvelle propriété dans l'entité user 'article' et fait une relation OneToMany, cette propriété peut-être nulle
+    Lorsque l'internaute poste un nouvel article, faites en sorte de renseigner la clé étrangère 'user_id' afin que l'article soit relié à l'utilisateur connecté.
+    dans la page profil, afficher tous les articles postés par l'internaute (titre, article+lien, date/heure, lien pour modifier l'article)
 */

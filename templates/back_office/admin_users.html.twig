@@ -34,11 +34,16 @@
                 <td class="text-center p-3">{{ data.id}}</td>
                 <td class="text-center p-3">{{ data.email}}</td>
                 <td class="text-center p-3">
-                    {% if data.roles.0 == 'ROLE_ADMIN'%}
+                {% for role in data.roles %}
+                    
+                    {% if role == 'ROLE_ADMIN'%}
                     Administrateur
-                    {% else %}
+                    {% elseif role == null %}
                     Utilisateur
                     {% endif %}
+                   
+
+                {% endfor %}
                 </td>
                 <td class="text-center p-3">{{ data.prenom}}</td>
                 <td class="text-center p-3">{{ data.nom}}</td>
@@ -57,4 +62,16 @@
     </tbody>
 
     </table>
+
+    {# {% if app.request.query.get('action') == 'update' %}
+        affichage formulaire
+
+        {{form_start(userForm)}}
+        
+            {{form_row(userForm.roles)}}
+
+        {{form_end(userForm)}}
+    {% endif %} 
+    ?action=update (mettre dans l'url)
+    #}
 {% endblock %}

@@ -149,6 +149,10 @@ class BlogController extends AbstractController
 
         if($formArticle->isSubmitted() && $formArticle->isValid())
         {
+            $user = $this->getUser();
+            // dd($id);
+
+            $article->setUserId( $user);
             // Le seul setter que l'on appelle de l'entité, c'est celui de la date puisqu'il n'y a pas de champ 'date' dans le formmulaire
 
             //Si l'article ne possède pas d'id, c'est une insertion, alors on entre dans la condition IF et on génère une date d'article

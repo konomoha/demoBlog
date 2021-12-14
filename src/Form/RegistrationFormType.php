@@ -4,16 +4,18 @@ namespace App\Form;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class RegistrationFormType extends AbstractType
 {
@@ -99,7 +101,6 @@ class RegistrationFormType extends AbstractType
                 ]
             );
         }
-
         elseif($options['userUpdate'] == true)
         {
             $builder
@@ -152,13 +153,18 @@ class RegistrationFormType extends AbstractType
                     ]
                     ]);
         }
-
         elseif($options['adminUpdate'] == true)
         {
             $builder
             ->add('roles', ChoiceType::class, [
-                'choices'   => array('ROLE_ADMIN' => 'Administrateur', 'ROLE_USER' => 'Utilisateur'),
-                'required'  => false,
+                'choices' => [
+                    'Administrateur' => 'ROLE_ADMIN',
+                    'Utilisateur' => ''
+                    
+                ],
+                'expanded' => true,
+                'multiple' => true,
+                'label' => 'Rôles' 
             ]);
         }
     }
@@ -170,6 +176,7 @@ class RegistrationFormType extends AbstractType
             'userRegistration' => false,
             'userUpdate' => false,
             'adminUpdate' => false
+            
         ]);
     }
 }

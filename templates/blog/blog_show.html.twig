@@ -6,6 +6,9 @@
 
 {% block body %}
 <h1 class="text-center my-5">Détails de {{article.titre}}</h1>
+<h2 class="text-center mb-3">Publié par {{article.userId.nom}} {{article.userId.prenom}}</h2>
+{# {{dump(article.userId)}} #}
+
 {# Cet objet 'article' ne sort pas de nulle part, c'est ce que le controller a transmit au template, c'est à dire les informations d'un article sélectionné en BDD en fonction de l'ID transmit dans l'url#}
 {# {{dump(article)}} #}
 
