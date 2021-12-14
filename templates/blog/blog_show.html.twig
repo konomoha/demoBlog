@@ -8,6 +8,9 @@
 <h1 class="text-center my-5">Détails de {{article.titre}}</h1>
 <h2 class="text-center mb-3">Publié par {{article.userId.nom}} {{article.userId.prenom}}</h2>
 {# {{dump(article.userId)}} #}
+{# {{dump(app.user)}}  #}
+
+{# {{article.userId.id}} #}
 
 {# Cet objet 'article' ne sort pas de nulle part, c'est ce que le controller a transmit au template, c'est à dire les informations d'un article sélectionné en BDD en fonction de l'ID transmit dans l'url#}
 {# {{dump(article)}} #}
@@ -33,7 +36,10 @@
           <p class="card-text mb-auto">{{article.contenu|striptags}}</p>
 
           <p class="mt-3"> 
+          {% if article.userId.id == app.user.id %}
             <a href="{{path('blog_edit', {'id': article.id})}}" class="btn btn-dark">Modifier</a>
+          {% endif %}
+            
             <a href="#" class="btn btn-dark">Imprimer</a>
           </p>
 
@@ -69,7 +75,9 @@
         6. Faites en sorte d'afficher 'soyez le premier à poster un commentaire' si aucun commentaire n'est associé à l'article 
        #}
       
-      <h2>Derniers avis</h2>
+      <h2 id="avis">Derniers avis</h2>
+
+      
       {# article.comments est un ensemble de résultats qui contient tous les commentaires liés à l'article stocké en BDD #}
       {# En sélectionnant l'article en BDD, nous avons automatiquement accès à toutes les correspondances dans les autres tables sql (relation bi-directionnelle) #}
       {# comment est une variable qui réceptionne 1 ligne de commentaire par tour de boucle #}
@@ -77,6 +85,7 @@
       {# Si article.comments N'EST PAS VIDE, cela veut dire qu'il y a des commentaires postés, on entre dans le IF #}
       {% if article.comments is not empty %}
       {% for comment in article.comments %}
+        
 
         {# {{ dump(comment) }} #}
         <div class="d-flex">

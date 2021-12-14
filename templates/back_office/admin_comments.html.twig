@@ -18,8 +18,12 @@ Blog BlogSymfony | Commentaires
     <thead>
         <tr >
             {% for data in colonnes %}
-            
+
+            {% if data != 'id' %}
+
                 <th class="text-center p-2">{{data|capitalize}}</th>
+
+            {% endif %}
             
             {% endfor %}
             <th>Action</th>
@@ -29,9 +33,9 @@ Blog BlogSymfony | Commentaires
     <tbody>
         {% for data in commentaires %}
             <tr>
-                <td class="text-center p-3">{{ data.id}}</td>
-                <td class="text-center p-3">{{ data.auteur}}</td>
+                
                 <td class="text-center p-3">{{ data.commentaire|striptags}}</td>
+                <td class="text-center p-3">{{ data.auteur}}</td>
                 <td class="text-center p-3">{{ data.date|date('d/m/Y')}}</td>
                 <td>
                     <a href="{{path('app_admin_comments_delete', {'id': data.id})}}" onclick="return(confirm('Voulez-vous vraiment supprimmer le commentaire de {{data.auteur}}?'));"><span > <i class="bi bi-trash"></i></span></a>
