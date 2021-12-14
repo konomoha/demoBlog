@@ -50,7 +50,7 @@
                 <td>
                     <a href="{{path('app_admin_users_delete', {'id': data.id})}}" onclick="return(confirm('Voulez-vous vraiment supprimmer {{data.prenom}} {{data.nom}}?'));"><span > <i class="bi bi-trash"></i></span></a>
                     <a href="{{path('app_admin_users_update', {'id': data.id})}}"><span><i class="bi bi-caret-up-square"></i></span></a>
-                    <a href="{{path('app_admin_users_add')}}" title="ajouter un utilisateur"><i class="bi bi-plus-square-fill"></i></span></a>
+                    <a href="{{path('app_admin_users_add')}}" title="ajouter un utilisateur "><i class="bi bi-plus-square-fill"></i></span></a>
                 </td>
             </tr>
         {% endfor %}
