@@ -12,7 +12,7 @@
  
  <h1>Profil de {{ profildata.prenom}}{{profildata.nom}}</h1>
 
- {# {{dump(profildata)}} #}
+ {{dump(profildata.article)}}
 
  <div class="mx-auto">
 
@@ -24,6 +24,34 @@
     <button><a href="{{path('app_profil_edit', {'id': profildata.id})}}">Modifier</a></button>
  </div>
 
+<h2 class="my-5 text-center">Articles publié par {{ profildata.prenom}} {{profildata.nom}}</h2>
+
+ {# {% for data in profildata.article %}
+ <ul>
+    <li>titre: {{data.titre}}</li>
+    <li>Date de publication: le {{data.date|date('d/m/Y')}} à {{data.date|date('H:i:s')}}</li>
+    </ul>
+ {% endfor %} #}
+
+{% if profildata.article is not empty %}
+ <table class="table table-bordered ">
+    <tr>
+        <th class="text-center p-3">Titre</th>
+        <th class="text-center p-3">Catégorie</th>
+        <th class="text-center p-3">Date de publication</th>
+        <th class="text-center p-3">Modifier</th>
+    </tr>
+    {% for data in profildata.article %}<tr>
+        <td class="text-center p-3"><a href="{{path('blog_show', {'id': data.id})}}">{{data.titre}}</a></td>
+        <td class="text-center p-3"><a href="{{path('blog_categorie', {'id': data.category.id})}}">{{data.category.titre}}</a></td>
+        <td class="text-center p-3">le {{data.date|date('d/m/Y')}} à {{data.date|date('H:i:s')}}</td>
+        <td class="text-center p-3"><a href="{{path('blog_edit', {'id': data.id})}}"> <span><i class="bi bi-caret-up-square"></i></span></a></td></tr>
+    {% endfor %}
+    
+ </table>
+ {% endif %}
+ 
+ {# I can try many to one pour les commentaires (avec date publication, article, etc...) #}
  
 
 {% endblock %}

@@ -27,7 +27,7 @@
         <div class="col-{{ col }} p-4 d-flex flex-column position-static">
           <strong class="d-inline-block mb-2 text-primary">{{data.category.titre}}</strong>
           <h3 class="mb-0">{{ data.titre }}</h3>
-          <div class="mb-1 text-muted">Publié le {{data.date|date('d/m/Y')}} à {{data.date|date('H:i:s')}}</div>
+          <div class="mb-1 text-muted">Publié par <strong>{{data.userId.nom}} {{data.userId.prenom}}</strong> le {{data.date|date('d/m/Y')}} à {{data.date|date('H:i:s')}}</div>
 
           {# slice(0, 100) : filtre twig qui retourne une partie de la chaine de caractères #}
           {# striptags : filtre twig qui supprime les balises html #}
